@@ -1,5 +1,5 @@
 class SessionController {
-  index(req, res) {
+  async index(req, res) {
     res.json({ message: 'Hello World' });
   }
 }

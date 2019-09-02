@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "jest"
+    "test": "NODE_ENV=test jest"
   },
   "dependencies": {
     "dotenv": "^8.1.0",
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@sucrase/jest-plugin": "^2.0.0",
+    "@types/jest": "^24.0.18",
     "eslint": "^6.3.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.1.0",
@@ -23,6 +24,7 @@
     "jest": "^24.9.0",
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
-    "sucrase": "^3.10.1"
+    "sucrase": "^3.10.1",
+    "supertest": "^4.0.2"
   }
 }
