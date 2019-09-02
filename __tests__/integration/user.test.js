@@ -1,4 +1,8 @@
 describe('User', () => {
+  /**
+   * Store user
+   */
+
   it('should not be able to create user with empty data', async done => {
     // name, email, password
     expect(true).toBe(true);
@@ -25,6 +29,10 @@ describe('User', () => {
     done();
   });
 
+  /**
+   * Show user
+   */
+
   it('should not be able get user without token', async done => {
     expect(true).toBe(true);
     done();
@@ -44,6 +52,10 @@ describe('User', () => {
     expect(true).toBe(true);
     done();
   });
+
+  /**
+   * Update user
+   */
 
   it('should not be able update user without token', async done => {
     expect(true).toBe(true);
@@ -85,6 +97,10 @@ describe('User', () => {
     expect(true).toBe(true);
     done();
   });
+
+  /**
+   * Delete user
+   */
 
   it('should not be able delete user without token', async done => {
     expect(true).toBe(true);

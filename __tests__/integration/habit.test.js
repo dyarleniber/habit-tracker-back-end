@@ -1,4 +1,8 @@
 describe('Habit', () => {
+  /**
+   * Show habits
+   */
+
   it('should not be able get habits without token', async done => {
     expect(true).toBe(true);
     done();
@@ -23,6 +27,10 @@ describe('Habit', () => {
     expect(true).toBe(true);
     done();
   });
+
+  /**
+   * Show habit
+   */
 
   it('should not be able get habit without token', async done => {
     expect(true).toBe(true);
@@ -54,6 +62,10 @@ describe('Habit', () => {
     done();
   });
 
+  /**
+   * Store habit
+   */
+
   it('should not be able create habit without token', async done => {
     expect(true).toBe(true);
     done();
@@ -84,6 +96,10 @@ describe('Habit', () => {
     expect(true).toBe(true);
     done();
   });
+
+  /**
+   * Update habit
+   */
 
   it('should not be able update habit without token', async done => {
     expect(true).toBe(true);
@@ -121,6 +137,10 @@ describe('Habit', () => {
     done();
   });
 
+  /**
+   * Delete habit
+   */
+
   it('should not be able delete habit without token', async done => {
     expect(true).toBe(true);
     done();
@@ -150,6 +170,10 @@ describe('Habit', () => {
     expect(true).toBe(true);
     done();
   });
+
+  /**
+   * Check habit
+   */
 
   it('should not be able check habit without token', async done => {
     expect(true).toBe(true);
