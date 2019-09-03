@@ -4,6 +4,8 @@ import factory from '../factories';
 import databaseUtils from '../utils/database';
 
 describe('User', () => {
+  afterEach(() => databaseUtils.truncate());
+
   afterAll(() => databaseUtils.disconnect());
 
   it('should encrypt user password', async () => {

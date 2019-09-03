@@ -4,7 +4,11 @@ import User from '../models/User';
 
 class UserController {
   async show(req, res) {
-    res.json({ message: 'Ok' });
+    const { id, name, email, createdAt, updatedAt } = await User.findById(
+      req.userId
+    );
+
+    return res.json({ id, name, email, createdAt, updatedAt });
   }
 
   async store(req, res) {

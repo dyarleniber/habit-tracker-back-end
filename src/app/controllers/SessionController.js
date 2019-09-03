@@ -1,8 +1,7 @@
 import Joi from 'joi';
-import jwt from 'jsonwebtoken';
 
 import User from '../models/User';
-import authConfig from '../../config/auth';
+import authHelper from '../helpers/auth';
 
 class SessionController {
   async store(req, res) {
@@ -37,9 +36,7 @@ class SessionController {
         name,
         email,
       },
-      token: jwt.sign({ id }, authConfig.secret, {
-        expiresIn: authConfig.expiresIn,
-      }),
+      token: authHelper.generateToken(user),
     });
   }
 }

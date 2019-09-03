@@ -3,6 +3,7 @@ import supertest from 'supertest';
 import server from '../../src/server';
 import factory from '../factories';
 import databaseUtils from '../utils/database';
+import authHelper from '../../src/app/helpers/auth';
 
 const request = supertest(server);
 
@@ -118,17 +119,46 @@ describe('User', () => {
    */
 
   it('should not be able get user without token', async done => {
-    expect(true).toBe(true);
+    const response = await request.get('/users');
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty('error', 'Token not provided');
+
     done();
   });
 
   it('should not be able get user with invalid token', async done => {
-    expect(true).toBe(true);
+    const response = await request
+      .get('/users')
+      .set('Authorization', `Bearer 123456`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty('error', 'Invalid token');
+
     done();
   });
 
   it('should be able to get user when authenticated', async done => {
-    expect(true).toBe(true);
+    const user = await factory.create('User');
+
+    const response = await request
+      .get('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).not.toHaveProperty('password', user.password);
+    expect(response.body).toHaveProperty('id', user.id);
+    expect(response.body).toHaveProperty('name', user.name);
+    expect(response.body).toHaveProperty('email', user.email);
+    expect(response.body).toHaveProperty('createdAt');
+    expect(response.body).toHaveProperty('updatedAt');
+    expect(new Date(response.body.createdAt).getTime()).toBe(
+      new Date(user.createdAt).getTime()
+    );
+    expect(new Date(response.body.updatedAt).getTime()).toBe(
+      new Date(user.updatedAt).getTime()
+    );
+
     done();
   });
 
