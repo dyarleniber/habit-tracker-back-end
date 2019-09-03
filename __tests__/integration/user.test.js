@@ -127,11 +127,6 @@ describe('User', () => {
     done();
   });
 
-  it('should not be able get user with expired token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should be able to get user when authenticated', async done => {
     expect(true).toBe(true);
     done();
@@ -147,11 +142,6 @@ describe('User', () => {
   });
 
   it('should not be able update user with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able update user with expired token', async done => {
     expect(true).toBe(true);
     done();
   });
@@ -192,11 +182,6 @@ describe('User', () => {
   });
 
   it('should not be able delete user with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able delete user with expired token', async done => {
     expect(true).toBe(true);
     done();
   });

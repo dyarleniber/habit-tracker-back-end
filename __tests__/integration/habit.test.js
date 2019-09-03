@@ -13,11 +13,6 @@ describe('Habit', () => {
     done();
   });
 
-  it('should not be able get habits with expired token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should be able to get habits when authenticated', async done => {
     expect(true).toBe(true);
     done();
@@ -38,11 +33,6 @@ describe('Habit', () => {
   });
 
   it('should not be able get habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able get habit with expired token', async done => {
     expect(true).toBe(true);
     done();
   });
@@ -76,11 +66,6 @@ describe('Habit', () => {
     done();
   });
 
-  it('should not be able create habit with expired token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should not be able create habit when authenticated and with empty data', async done => {
     // name, description
     expect(true).toBe(true);
@@ -107,11 +92,6 @@ describe('Habit', () => {
   });
 
   it('should not be able update habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able update habit with expired token', async done => {
     expect(true).toBe(true);
     done();
   });
@@ -151,11 +131,6 @@ describe('Habit', () => {
     done();
   });
 
-  it('should not be able delete habit with expired token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should not be able delete habit when authenticated and with invalid habit id', async done => {
     expect(true).toBe(true);
     done();
@@ -181,11 +156,6 @@ describe('Habit', () => {
   });
 
   it('should not be able check habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able check habit with expired token', async done => {
     expect(true).toBe(true);
     done();
   });
