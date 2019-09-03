@@ -166,16 +166,6 @@ describe('User', () => {
    * Update user
    */
 
-  it('should not be able update user without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able update user with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should not be able update user when authenticated and with empty data', async done => {
     // name, email, password
     expect(true).toBe(true);
@@ -205,16 +195,6 @@ describe('User', () => {
   /**
    * Delete user
    */
-
-  it('should not be able delete user without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able delete user with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
 
   it('should be able to delete user when authenticated', async done => {
     expect(true).toBe(true);

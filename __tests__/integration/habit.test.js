@@ -3,16 +3,6 @@ describe('Habit', () => {
    * Show habits
    */
 
-  it('should not be able get habits without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able get habits with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should be able to get habits when authenticated', async done => {
     expect(true).toBe(true);
     done();
@@ -26,16 +16,6 @@ describe('Habit', () => {
   /**
    * Show habit
    */
-
-  it('should not be able get habit without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able get habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
 
   it('should not be able get habit when authenticated and with invalid habit id', async done => {
     expect(true).toBe(true);
@@ -56,16 +36,6 @@ describe('Habit', () => {
    * Store habit
    */
 
-  it('should not be able create habit without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able create habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should not be able create habit when authenticated and with empty data', async done => {
     // name, description
     expect(true).toBe(true);
@@ -85,16 +55,6 @@ describe('Habit', () => {
   /**
    * Update habit
    */
-
-  it('should not be able update habit without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able update habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
 
   it('should not be able update habit when authenticated and with invalid habit id', async done => {
     expect(true).toBe(true);
@@ -121,16 +81,6 @@ describe('Habit', () => {
    * Delete habit
    */
 
-  it('should not be able delete habit without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able delete habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should not be able delete habit when authenticated and with invalid habit id', async done => {
     expect(true).toBe(true);
     done();
@@ -149,16 +99,6 @@ describe('Habit', () => {
   /**
    * Check habit
    */
-
-  it('should not be able check habit without token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
-
-  it('should not be able check habit with invalid token', async done => {
-    expect(true).toBe(true);
-    done();
-  });
 
   it('should not be able check habit when authenticated and with invalid habit id', async done => {
     expect(true).toBe(true);
