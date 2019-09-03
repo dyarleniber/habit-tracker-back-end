@@ -6,8 +6,6 @@ import HabitController from './app/controllers/HabitController';
 
 const routes = new Router();
 
-routes.get('/', SessionController.index);
-
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 

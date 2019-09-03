@@ -1,25 +1,16 @@
 import './bootstrap';
+import './database';
 
 import express from 'express';
-import mongoose from 'mongoose';
 
 import routes from './routes';
-import databaseConfig from './config/database';
 
 class App {
   constructor() {
     this.server = express();
 
-    this.database();
     this.middlewares();
     this.routes();
-  }
-
-  database() {
-    mongoose.connect(databaseConfig.uri, {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-    });
   }
 
   middlewares() {
