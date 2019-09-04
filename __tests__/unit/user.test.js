@@ -4,9 +4,13 @@ import factory from '../factories';
 import databaseUtils from '../utils/database';
 
 describe('User', () => {
-  afterEach(() => databaseUtils.truncate());
+  beforeEach(() => databaseUtils.truncate());
 
-  afterAll(() => databaseUtils.disconnect());
+  afterAll(() => {
+    databaseUtils.truncate().then(() => {
+      databaseUtils.disconnect();
+    });
+  });
 
   it('should encrypt user password', async () => {
     const user = await factory.create('User', {

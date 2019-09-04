@@ -7,9 +7,13 @@ import databaseUtils from '../utils/database';
 const request = supertest(server);
 
 describe('Session authentication', () => {
-  afterEach(() => databaseUtils.truncate());
+  beforeEach(() => databaseUtils.truncate());
 
-  afterAll(() => databaseUtils.disconnect());
+  afterAll(() => {
+    databaseUtils.truncate().then(() => {
+      databaseUtils.disconnect();
+    });
+  });
 
   it('should not be able to authenticate with empty data', async done => {
     const response = await request.post('/sessions').send({});

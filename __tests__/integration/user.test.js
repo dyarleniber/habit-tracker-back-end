@@ -4,13 +4,18 @@ import server from '../../src/server';
 import factory from '../factories';
 import databaseUtils from '../utils/database';
 import authHelper from '../../src/app/helpers/auth';
+import UserModel from '../../src/app/models/User';
 
 const request = supertest(server);
 
 describe('User', () => {
-  afterEach(() => databaseUtils.truncate());
+  beforeEach(() => databaseUtils.truncate());
 
-  afterAll(() => databaseUtils.disconnect());
+  afterAll(() => {
+    databaseUtils.truncate().then(() => {
+      databaseUtils.disconnect();
+    });
+  });
 
   /**
    * Store user
@@ -166,24 +171,103 @@ describe('User', () => {
    * Update user
    */
 
-  it('should not be able update user when authenticated and with empty data', async done => {
-    // name, email, password
-    expect(true).toBe(true);
-    done();
-  });
-
   it('should not be able update user when authenticated and with invalid email', async done => {
-    expect(true).toBe(true);
+    const user = await factory.create('User');
+
+    const response = await request
+      .put('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`)
+      .send({
+        email: 'invalidemail',
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(Array.isArray(response.body.error)).toBe(true);
+
     done();
   });
 
   it('should not be able update user when authenticated and with duplicate email', async done => {
-    expect(true).toBe(true);
+    const user1 = await factory.create('User', {
+      email: 'email1@email.com',
+    });
+
+    const user2 = await factory.create('User', {
+      email: 'email2@email.com',
+    });
+
+    const response = await request
+      .put('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user1)}`)
+      .send({
+        email: user2.email,
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error', 'User already exists');
+
+    done();
+  });
+
+  it('should be able to update only one user field when authenticated and with valid data', async done => {
+    const user = await factory.create('User', {
+      password: '123123',
+    });
+
+    const newUser = await factory.build('User', {
+      password: '321321',
+    });
+
+    const response = await request
+      .put('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`)
+      .send({
+        name: newUser.name,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id', user.id);
+    expect(response.body).toHaveProperty('name', newUser.name);
+    expect(response.body).toHaveProperty('email', user.email);
+    expect(response.updatedAt).not.toBe(user.updatedAt);
+
+    const updatedUser = await UserModel.findById(user.id);
+    const compareHash = await updatedUser.compareHash('123123');
+
+    expect(compareHash).toBe(true);
+
     done();
   });
 
   it('should be able to update user when authenticated and with valid data', async done => {
-    expect(true).toBe(true);
+    const user = await factory.create('User', {
+      password: '123123',
+    });
+
+    const newUser = await factory.build('User', {
+      password: '321321',
+    });
+
+    const response = await request
+      .put('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`)
+      .send({
+        email: newUser.email,
+        password: '321321',
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id', user.id);
+    expect(response.body).toHaveProperty('name', user.name);
+    expect(response.body).toHaveProperty('email', newUser.email);
+    expect(response.updatedAt).not.toBe(user.updatedAt);
+
+    const updatedUser = await UserModel.findById(user.id);
+    const compareHash = await updatedUser.compareHash('321321');
+
+    expect(compareHash).toBe(true);
+
     done();
   });
 

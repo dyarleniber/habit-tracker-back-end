@@ -40,7 +40,37 @@ class UserController {
   }
 
   async update(req, res) {
-    res.json({ message: 'Ok' });
+    const { error } = Joi.validate(req.body, {
+      name: Joi.string(),
+      email: Joi.string().email(),
+      password: Joi.string(),
+    });
+
+    if (error) {
+      return res.status(400).json({ error: error.details });
+    }
+
+    const user = await User.findById(req.userId);
+
+    if (req.body.email && req.body.email !== user.email) {
+      const userExists = await User.findOne({ email: req.body.email });
+
+      if (userExists) {
+        return res.status(400).json({ error: 'User already exists' });
+      }
+    }
+
+    const {
+      _id: id,
+      name,
+      email,
+      createdAt,
+      updatedAt,
+    } = await User.findByIdAndUpdate(req.userId, req.body, {
+      new: true,
+    });
+
+    return res.json({ id, name, email, createdAt, updatedAt });
   }
 
   async delete(req, res) {
