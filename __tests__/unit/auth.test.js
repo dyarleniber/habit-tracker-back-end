@@ -1,10 +1,6 @@
-import jwt from 'jsonwebtoken';
-import { promisify } from 'util';
-
 import factory from '../factories';
 import databaseUtils from '../utils/database';
 import authHelper from '../../src/app/helpers/auth';
-import authConfig from '../../src/config/auth';
 
 describe('User', () => {
   afterAll(() => databaseUtils.disconnect());
@@ -12,10 +8,23 @@ describe('User', () => {
   it('should generate a valid token', async () => {
     const user = await factory.build('User');
 
-    const token = authHelper.generateToken(user);
+    const token = authHelper.generateToken(user.id);
 
-    const decoded = await promisify(jwt.verify)(token, authConfig.secret);
+    const decodedUserId = await authHelper.verifyToken(token);
 
-    expect(user.id).toBe(decoded.id);
+    expect(decodedUserId).toBe(user.id);
+  });
+
+  it('should catch an error in case of invalid token', async () => {
+    expect.assertions(1);
+
+    try {
+      await authHelper.verifyToken('invalidtoken');
+    } catch (e) {
+      expect(e).toEqual({
+        name: 'JsonWebTokenError',
+        message: 'jwt malformed',
+      });
+    }
   });
 });

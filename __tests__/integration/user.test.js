@@ -148,7 +148,7 @@ describe('User', () => {
 
     const response = await request
       .get('/users')
-      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`);
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
 
     expect(response.status).toBe(200);
     expect(response.body).not.toHaveProperty('password', user.password);
@@ -176,7 +176,7 @@ describe('User', () => {
 
     const response = await request
       .put('/users')
-      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`)
       .send({
         email: 'invalidemail',
       });
@@ -199,7 +199,7 @@ describe('User', () => {
 
     const response = await request
       .put('/users')
-      .set('Authorization', `Bearer ${authHelper.generateToken(user1)}`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user1.id)}`)
       .send({
         email: user2.email,
       });
@@ -221,7 +221,7 @@ describe('User', () => {
 
     const response = await request
       .put('/users')
-      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`)
       .send({
         name: newUser.name,
       });
@@ -251,7 +251,7 @@ describe('User', () => {
 
     const response = await request
       .put('/users')
-      .set('Authorization', `Bearer ${authHelper.generateToken(user)}`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`)
       .send({
         email: newUser.email,
         password: '321321',

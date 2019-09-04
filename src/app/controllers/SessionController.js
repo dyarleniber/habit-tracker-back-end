@@ -36,7 +36,7 @@ class SessionController {
         name,
         email,
       },
-      token: authHelper.generateToken(user),
+      token: authHelper.generateToken(user.id),
     });
   }
 }
