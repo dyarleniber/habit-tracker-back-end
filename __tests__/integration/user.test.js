@@ -143,6 +143,23 @@ describe('User', () => {
     done();
   });
 
+  it('should not be able get user with deleted user token', async done => {
+    const user = await factory.create('User');
+
+    const token = authHelper.generateToken(user.id);
+
+    await UserModel.findByIdAndDelete(user.id);
+
+    const response = await request
+      .get('/users')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty('error', 'Invalid token');
+
+    done();
+  });
+
   it('should be able to get user when authenticated', async done => {
     const user = await factory.create('User');
 
@@ -281,7 +298,18 @@ describe('User', () => {
    */
 
   it('should be able to delete user when authenticated', async done => {
-    expect(true).toBe(true);
+    const user = await factory.create('User');
+
+    const response = await request
+      .delete('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(200);
+
+    const userExists = await UserModel.findById(user.id);
+
+    expect(userExists).toBeFalsy();
+
     done();
   });
 

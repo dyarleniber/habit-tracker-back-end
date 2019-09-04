@@ -74,7 +74,9 @@ class UserController {
   }
 
   async delete(req, res) {
-    res.json({ message: 'Ok' });
+    await User.findByIdAndDelete(req.userId);
+
+    return res.send();
   }
 }
 
