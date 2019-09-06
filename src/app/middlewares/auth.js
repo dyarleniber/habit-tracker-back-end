@@ -1,5 +1,4 @@
 import User from '../models/User';
-
 import authHelper from '../helpers/auth';
 
 export default async (req, res, next) => {

@@ -12,7 +12,7 @@ describe('User', () => {
    * Store user
    */
 
-  it('should not be able to create user with empty data', async done => {
+  it('should not be able to create user with empty data', async () => {
     const user = await factory.build('User');
 
     // Empty object
@@ -40,11 +40,9 @@ describe('User', () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('error');
     expect(Array.isArray(response.body.error)).toBe(true);
-
-    done();
   });
 
-  it('should not be able to create user with invalid email', async done => {
+  it('should not be able to create user with invalid email', async () => {
     const user = await factory.build('User', {
       email: 'invalidemail',
     });
@@ -58,11 +56,9 @@ describe('User', () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('error');
     expect(Array.isArray(response.body.error)).toBe(true);
-
-    done();
   });
 
-  it('should not be able to create user with duplicate email', async done => {
+  it('should not be able to create user with duplicate email', async () => {
     const user = await factory.build('User');
 
     let response = await request.post('/users').send({
@@ -84,11 +80,9 @@ describe('User', () => {
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('error', 'User already exists');
-
-    done();
   });
 
-  it('should be able to create user with valid data', async done => {
+  it('should be able to create user with valid data', async () => {
     const user = await factory.build('User');
 
     const response = await request.post('/users').send({
@@ -101,40 +95,33 @@ describe('User', () => {
     expect(response.body).toHaveProperty('id');
     expect(response.body).toHaveProperty('name', user.name);
     expect(response.body).toHaveProperty('email', user.email);
-
-    done();
   });
 
-  it('should receive a email notification when a user is created', async done => {
+  it('should receive a email notification when a user is created', async () => {
     expect(true).toBe(true);
-    done();
   });
 
   /**
    * Show user
    */
 
-  it('should not be able get user without token', async done => {
+  it('should not be able get user without token', async () => {
     const response = await request.get('/users');
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty('error', 'Token not provided');
-
-    done();
   });
 
-  it('should not be able get user with invalid token', async done => {
+  it('should not be able get user with invalid token', async () => {
     const response = await request
       .get('/users')
       .set('Authorization', `Bearer 123456`);
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty('error', 'Invalid token');
-
-    done();
   });
 
-  it('should not be able get user with deleted user token', async done => {
+  it('should not be able get user with deleted user token', async () => {
     const user = await factory.create('User');
 
     const token = authHelper.generateToken(user.id);
@@ -147,11 +134,9 @@ describe('User', () => {
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty('error', 'Invalid token');
-
-    done();
   });
 
-  it('should be able to get user when authenticated', async done => {
+  it('should be able to get user when authenticated', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -171,15 +156,13 @@ describe('User', () => {
     expect(new Date(response.body.updatedAt).getTime()).toBe(
       new Date(user.updatedAt).getTime()
     );
-
-    done();
   });
 
   /**
    * Update user
    */
 
-  it('should not be able update user when authenticated and with invalid email', async done => {
+  it('should not be able update user when authenticated and with invalid email', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -192,11 +175,9 @@ describe('User', () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('error');
     expect(Array.isArray(response.body.error)).toBe(true);
-
-    done();
   });
 
-  it('should not be able update user when authenticated and with duplicate email', async done => {
+  it('should not be able update user when authenticated and with duplicate email', async () => {
     const user1 = await factory.create('User', {
       email: 'email1@email.com',
     });
@@ -214,11 +195,9 @@ describe('User', () => {
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('error', 'User already exists');
-
-    done();
   });
 
-  it('should be able to update only one user field when authenticated and with valid data', async done => {
+  it('should be able to update only one user field when authenticated and with valid data', async () => {
     const user = await factory.create('User', {
       password: '123123',
     });
@@ -244,11 +223,9 @@ describe('User', () => {
     const compareHash = await updatedUser.compareHash('123123');
 
     expect(compareHash).toBe(true);
-
-    done();
   });
 
-  it('should be able to update user when authenticated and with valid data', async done => {
+  it('should be able to update user when authenticated and with valid data', async () => {
     const user = await factory.create('User', {
       password: '123123',
     });
@@ -275,20 +252,17 @@ describe('User', () => {
     const compareHash = await updatedUser.compareHash('321321');
 
     expect(compareHash).toBe(true);
-
-    done();
   });
 
-  it('should receive a email notification when a user is updated', async done => {
+  it('should receive a email notification when a user is updated', async () => {
     expect(true).toBe(true);
-    done();
   });
 
   /**
    * Delete user
    */
 
-  it('should be able to delete user when authenticated', async done => {
+  it('should be able to delete user when authenticated', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -300,12 +274,9 @@ describe('User', () => {
     const userExists = await UserModel.findById(user.id);
 
     expect(userExists).toBeFalsy();
-
-    done();
   });
 
-  it('should receive a email notification when a user is deleted', async done => {
+  it('should receive a email notification when a user is deleted', async () => {
     expect(true).toBe(true);
-    done();
   });
 });
