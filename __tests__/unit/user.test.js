@@ -1,17 +1,8 @@
 import bcrypt from 'bcryptjs';
 
-import factory from '../factories';
-import databaseUtils from '../utils/database';
+import factory from '../factory';
 
 describe('User', () => {
-  beforeEach(() => databaseUtils.truncate());
-
-  afterAll(() => {
-    databaseUtils.truncate().then(() => {
-      databaseUtils.disconnect();
-    });
-  });
-
   it('should encrypt user password', async () => {
     const user = await factory.create('User', {
       password: '123123',

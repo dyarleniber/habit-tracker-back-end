@@ -1,22 +1,13 @@
 import supertest from 'supertest';
 
 import server from '../../src/server';
-import factory from '../factories';
-import databaseUtils from '../utils/database';
+import factory from '../factory';
 import authHelper from '../../src/app/helpers/auth';
 import UserModel from '../../src/app/models/User';
 
 const request = supertest(server);
 
 describe('User', () => {
-  beforeEach(() => databaseUtils.truncate());
-
-  afterAll(() => {
-    databaseUtils.truncate().then(() => {
-      databaseUtils.disconnect();
-    });
-  });
-
   /**
    * Store user
    */

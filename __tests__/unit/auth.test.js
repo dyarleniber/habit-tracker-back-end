@@ -1,10 +1,7 @@
-import factory from '../factories';
-import databaseUtils from '../utils/database';
+import factory from '../factory';
 import authHelper from '../../src/app/helpers/auth';
 
 describe('User', () => {
-  afterAll(() => databaseUtils.disconnect());
-
   it('should generate a valid token', async () => {
     const user = await factory.build('User');
 

@@ -1,6 +1,3 @@
-import '../src/bootstrap';
-import '../src/database';
-
 import faker from 'faker';
 import { factory, MongooseAdapter } from 'factory-girl';
 

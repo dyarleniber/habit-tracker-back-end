@@ -1,20 +1,11 @@
 import supertest from 'supertest';
 
+import factory from '../factory';
 import server from '../../src/server';
-import factory from '../factories';
-import databaseUtils from '../utils/database';
 
 const request = supertest(server);
 
 describe('Session authentication', () => {
-  beforeEach(() => databaseUtils.truncate());
-
-  afterAll(() => {
-    databaseUtils.truncate().then(() => {
-      databaseUtils.disconnect();
-    });
-  });
-
   it('should not be able to authenticate with empty data', async done => {
     const response = await request.post('/sessions').send({});
 

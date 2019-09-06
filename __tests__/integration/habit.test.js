@@ -1,22 +1,13 @@
 import supertest from 'supertest';
 
+import factory from '../factory';
 import server from '../../src/server';
-import factory from '../factories';
-import databaseUtils from '../utils/database';
 import authHelper from '../../src/app/helpers/auth';
 import HabitModel from '../../src/app/models/Habit';
 
 const request = supertest(server);
 
 describe('Habit', () => {
-  beforeEach(() => databaseUtils.truncate());
-
-  afterAll(() => {
-    databaseUtils.truncate().then(() => {
-      databaseUtils.disconnect();
-    });
-  });
-
   /**
    * Show habits
    */
