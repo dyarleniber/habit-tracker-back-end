@@ -1,6 +1,9 @@
 import Joi from 'joi';
+import { join } from 'path';
+import { format } from 'date-fns';
 
 import User from '../models/User';
+import Mail from '../services/Mail';
 
 class UserController {
   async show(req, res) {
@@ -31,6 +34,15 @@ class UserController {
     }
 
     const { id, name, email } = await User.create(req.body);
+
+    await Mail.sendMail({
+      to: `${name} <${email}>`,
+      subject: 'Welcome!',
+      template: join('user', 'createdUser'),
+      context: {
+        name,
+      },
+    });
 
     return res.json({
       id,
@@ -70,11 +82,32 @@ class UserController {
       new: true,
     });
 
+    await Mail.sendMail({
+      to: `${name} <${email}>`,
+      subject: 'Profile updated',
+      template: join('user', 'updatedUser'),
+      context: {
+        name,
+        updatedAt: format(updatedAt, 'PPpp'),
+      },
+    });
+
     return res.json({ id, name, email, createdAt, updatedAt });
   }
 
   async delete(req, res) {
+    const { name, email } = await User.findById(req.userId);
+
     await User.findByIdAndDelete(req.userId);
+
+    await Mail.sendMail({
+      to: `${name} <${email}>`,
+      subject: 'User removed',
+      template: join('user', 'deletedUser'),
+      context: {
+        name,
+      },
+    });
 
     return res.send();
   }

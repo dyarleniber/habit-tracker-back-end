@@ -4,6 +4,7 @@ import server from '../../src/server';
 import factory from '../factory';
 import authHelper from '../../src/app/helpers/auth';
 import UserModel from '../../src/app/models/User';
+import { transportMock } from '../../__mocks__/nodemailer';
 
 const request = supertest(server);
 
@@ -98,7 +99,20 @@ describe('User', () => {
   });
 
   it('should receive a email notification when a user is created', async () => {
-    expect(true).toBe(true);
+    const user = await factory.build('User');
+
+    const response = await request.post('/users').send({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+    });
+
+    expect(response.status).toBe(200);
+    expect(transportMock.sendMail).toHaveBeenCalledTimes(1);
+    expect(transportMock.sendMail.mock.calls[0][0].subject).toBe('Welcome!');
+    expect(transportMock.sendMail.mock.calls[0][0].to).toBe(
+      `${user.name} <${user.email}>`
+    );
   });
 
   /**
@@ -255,7 +269,30 @@ describe('User', () => {
   });
 
   it('should receive a email notification when a user is updated', async () => {
-    expect(true).toBe(true);
+    const user = await factory.create('User', {
+      password: '123123',
+    });
+
+    const newUser = await factory.build('User', {
+      password: '321321',
+    });
+
+    const response = await request
+      .put('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`)
+      .send({
+        email: newUser.email,
+        password: '321321',
+      });
+
+    expect(response.status).toBe(200);
+    expect(transportMock.sendMail).toHaveBeenCalledTimes(1);
+    expect(transportMock.sendMail.mock.calls[0][0].subject).toBe(
+      'Profile updated'
+    );
+    expect(transportMock.sendMail.mock.calls[0][0].to).toBe(
+      `${user.name} <${user.email}>`
+    );
   });
 
   /**
@@ -277,6 +314,19 @@ describe('User', () => {
   });
 
   it('should receive a email notification when a user is deleted', async () => {
-    expect(true).toBe(true);
+    const user = await factory.create('User');
+
+    const response = await request
+      .delete('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(200);
+    expect(transportMock.sendMail).toHaveBeenCalledTimes(1);
+    expect(transportMock.sendMail.mock.calls[0][0].subject).toBe(
+      'User removed'
+    );
+    expect(transportMock.sendMail.mock.calls[0][0].to).toBe(
+      `${user.name} <${user.email}>`
+    );
   });
 });

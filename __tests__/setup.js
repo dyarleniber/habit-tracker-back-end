@@ -2,6 +2,8 @@ import '../src/bootstrap';
 
 import databaseHelper from '../src/app/helpers/database';
 
+jest.mock('nodemailer');
+
 beforeAll(() => {
   return databaseHelper.connect();
 });
