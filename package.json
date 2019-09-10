@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "NODE_ENV=test jest --runInBand"
+    "test": "NODE_ENV=test jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -33,6 +33,7 @@
     "factory-girl": "^5.0.4",
     "faker": "^4.1.0",
     "jest": "^24.9.0",
+    "mongodb-memory-server": "^5.2.2",
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
     "sucrase": "^3.10.1",

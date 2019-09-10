@@ -158,7 +158,7 @@ describe('User', () => {
       .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).not.toHaveProperty('password', user.password);
+    expect(response.body).not.toHaveProperty('password');
     expect(response.body).toHaveProperty('id', user.id);
     expect(response.body).toHaveProperty('name', user.name);
     expect(response.body).toHaveProperty('email', user.email);

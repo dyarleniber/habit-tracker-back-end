@@ -9,15 +9,21 @@ const connect = async () => {
 };
 
 const truncate = async () => {
-  const models = mongoose.connection.modelNames();
-  const promises = models.map(async model =>
-    mongoose.connection.model(model).deleteMany({})
-  );
-  await Promise.all(promises);
+  if (mongoose.connection.readyState !== 0) {
+    const { collections } = mongoose.connection;
+
+    const promises = Object.keys(collections).map(collection =>
+      mongoose.connection.collection(collection).deleteMany({})
+    );
+
+    await Promise.all(promises);
+  }
 };
 
 const disconnect = async () => {
-  await mongoose.disconnect();
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
 };
 
 export default {
