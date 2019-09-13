@@ -31,7 +31,11 @@ class App {
 
   exceptionHandler() {
     this.express.use((err, req, res, next) => {
-      Logger.error(err.message);
+      Logger.error(
+        `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${
+          req.method
+        } - ${req.ip}`
+      );
 
       return res
         .status(err.status || 500)
