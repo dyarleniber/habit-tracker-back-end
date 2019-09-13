@@ -1,4 +1,3 @@
-import Joi from 'joi';
 import { join } from 'path';
 import { format } from 'date-fns';
 
@@ -15,18 +14,6 @@ class UserController {
   }
 
   async store(req, res) {
-    const { error } = Joi.validate(req.body, {
-      name: Joi.string().required(),
-      email: Joi.string()
-        .email()
-        .required(),
-      password: Joi.string().required(),
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.details });
-    }
-
     const userExists = await User.findOne({ email: req.body.email });
 
     if (userExists) {
@@ -52,16 +39,6 @@ class UserController {
   }
 
   async update(req, res) {
-    const { error } = Joi.validate(req.body, {
-      name: Joi.string(),
-      email: Joi.string().email(),
-      password: Joi.string(),
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.details });
-    }
-
     const user = await User.findById(req.userId);
 
     if (req.body.email && req.body.email !== user.email) {

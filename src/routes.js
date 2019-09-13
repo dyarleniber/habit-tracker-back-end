@@ -4,24 +4,33 @@ import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import HabitController from './app/controllers/HabitController';
 
+import UserStoreValidator from './app/validators/UserStore';
+import UserUpdateValidator from './app/validators/UserUpdate';
+import SessionStoreValidator from './app/validators/SessionStore';
+import HabitIndexValidator from './app/validators/HabitIndex';
+import HabitShowValidator from './app/validators/HabitShow';
+import HabitStoreValidator from './app/validators/HabitStore';
+import HabitUpdateValidator from './app/validators/HabitUpdate';
+import HabitDeleteValidator from './app/validators/HabitDelete';
+
 import authMiddleware from './app/middlewares/auth';
 
 const routes = new Router();
 
-routes.post('/users', UserController.store);
-routes.post('/sessions', SessionController.store);
+routes.post('/users', UserStoreValidator, UserController.store);
+routes.post('/sessions', SessionStoreValidator, SessionController.store);
 
 routes.use(authMiddleware);
 
 routes.get('/users', UserController.show);
-routes.put('/users', UserController.update);
+routes.put('/users', UserUpdateValidator, UserController.update);
 routes.delete('/users', UserController.delete);
 
-routes.get('/habits', HabitController.index);
-routes.get('/habits/:id', HabitController.show);
-routes.post('/habits', HabitController.store);
-routes.put('/habits/:id', HabitController.update);
-routes.delete('/habits/:id', HabitController.delete);
+routes.get('/habits', HabitIndexValidator, HabitController.index);
+routes.get('/habits/:id', HabitShowValidator, HabitController.show);
+routes.post('/habits', HabitStoreValidator, HabitController.store);
+routes.put('/habits/:id', HabitUpdateValidator, HabitController.update);
+routes.delete('/habits/:id', HabitDeleteValidator, HabitController.delete);
 routes.post('/habits/:id/check', HabitController.check);
 
 export default routes;

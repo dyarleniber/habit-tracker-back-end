@@ -1,21 +1,8 @@
-import Joi from 'joi';
-
 import User from '../models/User';
 import authHelper from '../helpers/auth';
 
 class SessionController {
   async store(req, res) {
-    const { error } = Joi.validate(req.body, {
-      email: Joi.string()
-        .email()
-        .required(),
-      password: Joi.string().required(),
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.details });
-    }
-
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });

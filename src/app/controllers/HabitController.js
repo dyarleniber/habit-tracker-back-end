@@ -1,19 +1,7 @@
-import Joi from 'joi';
-
 import Habit from '../models/Habit';
 
 class HabitController {
   async index(req, res) {
-    const { error } = Joi.validate(req.query, {
-      name: Joi.string(),
-      description: Joi.string(),
-      page: Joi.number(),
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.details });
-    }
-
     const filters = {};
 
     filters.user = req.userId;
@@ -40,14 +28,6 @@ class HabitController {
   }
 
   async show(req, res) {
-    const { error } = Joi.validate(req.params, {
-      id: Joi.string().required(),
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.details });
-    }
-
     try {
       const habit = await Habit.findById(req.params.id).populate({
         path: 'user',
@@ -65,35 +45,12 @@ class HabitController {
   }
 
   async store(req, res) {
-    const { error } = Joi.validate(req.body, {
-      name: Joi.string().required(),
-      description: Joi.string().required(),
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.details });
-    }
-
     const habit = await Habit.create({ ...req.body, user: req.userId });
 
     return res.json(habit);
   }
 
   async update(req, res) {
-    const { bodyError } = Joi.validate(req.body, {
-      name: Joi.string(),
-      description: Joi.string(),
-    });
-
-    const { paramsError } = Joi.validate(req.params, {
-      id: Joi.string().required(),
-    });
-
-    if (bodyError || paramsError) {
-      const error = bodyError || paramsError;
-      return res.status(400).json({ error: error.details });
-    }
-
     try {
       const habit = await Habit.findById(req.params.id);
 
@@ -112,14 +69,6 @@ class HabitController {
   }
 
   async delete(req, res) {
-    const { error } = Joi.validate(req.params, {
-      id: Joi.string().required(),
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.details });
-    }
-
     try {
       const habit = await Habit.findById(req.params.id);
 
