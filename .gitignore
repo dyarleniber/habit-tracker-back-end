@@ -4,4 +4,7 @@ node_modules
 
 __tests__/coverage
 
+logs/*
+!logs/.gitkeep
+
 .env

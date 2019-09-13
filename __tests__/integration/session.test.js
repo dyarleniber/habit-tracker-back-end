@@ -1,9 +1,9 @@
 import supertest from 'supertest';
 
 import factory from '../factory';
-import server from '../../src/server';
+import app from '../../src/app';
 
-const request = supertest(server);
+const request = supertest(app);
 
 describe('Session authentication', () => {
   it('should not be able to authenticate with empty data', async () => {

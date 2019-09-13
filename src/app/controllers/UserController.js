@@ -3,7 +3,7 @@ import { join } from 'path';
 import { format } from 'date-fns';
 
 import User from '../models/User';
-import Mail from '../services/Mail';
+import Mail from '../../lib/Mail';
 
 class UserController {
   async show(req, res) {

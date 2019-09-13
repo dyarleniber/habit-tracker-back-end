@@ -1,11 +1,11 @@
 import supertest from 'supertest';
 
 import factory from '../factory';
-import server from '../../src/server';
+import app from '../../src/app';
 import authHelper from '../../src/app/helpers/auth';
 import HabitModel from '../../src/app/models/Habit';
 
-const request = supertest(server);
+const request = supertest(app);
 
 describe('Habit', () => {
   /**
