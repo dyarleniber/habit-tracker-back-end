@@ -1,7 +1,18 @@
 import Habit from '../models/Habit';
+import Cache from '../../lib/Cache';
 
 class HabitController {
   async index(req, res) {
+    const { page = 1 } = req.query;
+
+    const cacheKey = `user:${req.userId}:habits:${page}`;
+
+    const cached = await Cache.get(cacheKey);
+
+    if (cached) {
+      return res.json(cached);
+    }
+
     const filters = {};
 
     filters.user = req.userId;
@@ -15,7 +26,7 @@ class HabitController {
     }
 
     const habits = await Habit.paginate(filters, {
-      page: req.query.page || 1,
+      page,
       limit: 20,
       populate: {
         path: 'user',
@@ -23,6 +34,8 @@ class HabitController {
       },
       sort: '-createdAt',
     });
+
+    await Cache.set(cacheKey, habits);
 
     return res.json(habits);
   }
@@ -47,6 +60,8 @@ class HabitController {
   async store(req, res) {
     const habit = await Habit.create({ ...req.body, user: req.userId });
 
+    await Cache.invalidatePrefix(`user:${req.userId}:habits`);
+
     return res.json(habit);
   }
 
@@ -61,6 +76,8 @@ class HabitController {
       const newHabit = await Habit.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
+
+      await Cache.invalidatePrefix(`user:${req.userId}:habits`);
 
       return res.json(newHabit);
     } catch (err) {
@@ -77,6 +94,8 @@ class HabitController {
       }
 
       await Habit.findByIdAndDelete(req.params.id);
+
+      await Cache.invalidatePrefix(`user:${req.userId}:habits`);
 
       return res.send();
     } catch (err) {
