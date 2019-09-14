@@ -1,9 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
-class MongoDBMemoryServer {
+class MemoryDatabaseServer {
   constructor() {
     this.mongod = new MongoMemoryServer({
+      binary: {
+        version: '4.0.3',
+      },
       autoStart: false,
     });
   }
@@ -21,4 +24,4 @@ class MongoDBMemoryServer {
   }
 }
 
-module.exports = new MongoDBMemoryServer();
+module.exports = new MemoryDatabaseServer();

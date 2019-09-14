@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const NodeEnvironment = require('jest-environment-node');
 
-const MongoDBMemoryServer = require('../src/lib/MongoDBMemoryServer');
+const MemoryDatabaseServer = require('../src/lib/MemoryDatabaseServer');
 
 class CustomEnvironment extends NodeEnvironment {
   async setup() {
     await super.setup();
 
-    this.global.__DB_URL__ = await MongoDBMemoryServer.getConnectionString();
+    this.global.__DB_URL__ = await MemoryDatabaseServer.getConnectionString();
   }
 
   async teardown() {

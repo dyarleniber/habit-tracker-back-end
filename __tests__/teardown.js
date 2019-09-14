@@ -1,5 +1,5 @@
-const MongoDBMemoryServer = require('../src/lib/MongoDBMemoryServer');
+const MemoryDatabaseServer = require('../src/lib/MemoryDatabaseServer');
 
 module.exports = async () => {
-  await MongoDBMemoryServer.stop();
+  await MemoryDatabaseServer.stop();
 };
