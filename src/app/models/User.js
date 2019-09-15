@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+import Habit from './Habit';
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -23,7 +25,7 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-UserSchema.pre('save', async function hashPassword(next) {
+UserSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     return next();
   }
@@ -33,15 +35,10 @@ UserSchema.pre('save', async function hashPassword(next) {
   return next();
 });
 
-UserSchema.pre('findOneAndUpdate', async function hashPassword(next) {
-  const modifiedField = this.getUpdate().password;
-  if (!modifiedField) {
-    return next();
-  }
+UserSchema.pre('remove', async function(next) {
+  await Habit.deleteMany({ user: this._id });
 
-  this.getUpdate().password = await bcrypt.hash(modifiedField, 8);
-
-  return next();
+  next();
 });
 
 UserSchema.methods = {

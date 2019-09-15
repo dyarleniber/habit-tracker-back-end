@@ -4,6 +4,7 @@ import app from '../../src/app';
 import factory from '../factory';
 import authHelper from '../../src/app/helpers/auth';
 import UserModel from '../../src/app/models/User';
+import HabitModel from '../../src/app/models/Habit';
 import { transportMock } from '../../__mocks__/nodemailer';
 
 const request = supertest(app);
@@ -311,6 +312,25 @@ describe('User', () => {
     const userExists = await UserModel.findById(user.id);
 
     expect(userExists).toBeFalsy();
+  });
+
+  it('should be able to delete user and user habits when authenticated', async () => {
+    const user = await factory.create('User');
+    const habit = await factory.create('Habit', {
+      user: user.id,
+    });
+
+    const response = await request
+      .delete('/users')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(200);
+
+    const userExists = await UserModel.findById(user.id);
+    const habitExists = await HabitModel.findById(habit.id);
+
+    expect(userExists).toBeFalsy();
+    expect(habitExists).toBeFalsy();
   });
 
   it('should receive a email notification when a user is deleted', async () => {

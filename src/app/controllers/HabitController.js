@@ -58,7 +58,13 @@ class HabitController {
   }
 
   async store(req, res) {
-    const habit = await Habit.create({ ...req.body, user: req.userId });
+    const habit = new Habit({
+      name: req.body.name,
+      description: req.body.description,
+      user: req.userId,
+    });
+
+    await habit.save();
 
     await Cache.invalidatePrefix(`user:${req.userId}:habits`);
 
@@ -73,13 +79,13 @@ class HabitController {
         return res.status(401).json({ error: 'You are not the habit author' });
       }
 
-      const newHabit = await Habit.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-      });
+      habit.set(req.body);
+
+      await habit.save();
 
       await Cache.invalidatePrefix(`user:${req.userId}:habits`);
 
-      return res.json(newHabit);
+      return res.json(habit);
     } catch (err) {
       return res.status(400).json({ error: 'Habit not found' });
     }
@@ -93,7 +99,7 @@ class HabitController {
         return res.status(401).json({ error: 'You are not the habit author' });
       }
 
-      await Habit.findByIdAndDelete(req.params.id);
+      await habit.remove();
 
       await Cache.invalidatePrefix(`user:${req.userId}:habits`);
 

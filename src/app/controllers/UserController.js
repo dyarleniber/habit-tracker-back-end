@@ -20,7 +20,15 @@ class UserController {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    const { id, name, email } = await User.create(req.body);
+    const user = new User({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+    });
+
+    await user.save();
+
+    const { _id: id, name, email } = user;
 
     await Mail.sendMail({
       to: `${name} <${email}>`,
@@ -49,15 +57,11 @@ class UserController {
       }
     }
 
-    const {
-      _id: id,
-      name,
-      email,
-      createdAt,
-      updatedAt,
-    } = await User.findByIdAndUpdate(req.userId, req.body, {
-      new: true,
-    });
+    user.set(req.body);
+
+    await user.save();
+
+    const { _id: id, name, email, createdAt, updatedAt } = user;
 
     await Mail.sendMail({
       to: `${name} <${email}>`,
@@ -73,9 +77,11 @@ class UserController {
   }
 
   async delete(req, res) {
-    const { name, email } = await User.findById(req.userId);
+    const user = await User.findById(req.userId);
 
-    await User.findByIdAndDelete(req.userId);
+    await user.remove();
+
+    const { name, email } = user;
 
     await Mail.sendMail({
       to: `${name} <${email}>`,

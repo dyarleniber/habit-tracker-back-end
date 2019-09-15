@@ -42,9 +42,11 @@ describe('Cache', () => {
   });
 
   it('should be able to invalidate cache by prefix', async () => {
+    const keys = ['x'];
     const prefix = 'resource:x:resource';
 
-    const keysSpy = jest.spyOn(Redis.prototype, 'keys');
+    const keysSpy = jest.spyOn(Redis.prototype, 'keys').mockReturnValue(keys);
+
     const delSpy = jest.spyOn(Redis.prototype, 'del');
 
     await Cache.invalidatePrefix(prefix);

@@ -37,7 +37,9 @@ class Cache {
       key.replace(`${redisConfig.keyPrefix}`, '')
     );
 
-    return this.redis.del(keysWithoutPrefix);
+    if (keysWithoutPrefix && keysWithoutPrefix.length > 0) {
+      await this.redis.del(keysWithoutPrefix);
+    }
   }
 }
 
