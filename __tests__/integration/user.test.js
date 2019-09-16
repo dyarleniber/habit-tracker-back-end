@@ -2,7 +2,7 @@ import supertest from 'supertest';
 
 import app from '../../src/app';
 import factory from '../factory';
-import authHelper from '../../src/app/helpers/auth';
+import authHelper from '../../src/helpers/auth';
 import UserModel from '../../src/app/models/User';
 import HabitModel from '../../src/app/models/Habit';
 import { transportMock } from '../../__mocks__/nodemailer';

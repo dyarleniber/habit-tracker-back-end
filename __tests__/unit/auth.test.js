@@ -1,5 +1,5 @@
 import factory from '../factory';
-import authHelper from '../../src/app/helpers/auth';
+import authHelper from '../../src/helpers/auth';
 
 describe('User', () => {
   it('should generate a valid token', async () => {

@@ -4,8 +4,10 @@ import express from 'express';
 import 'express-async-errors';
 
 import routes from './routes';
-import databaseHelper from './app/helpers/database';
+import databaseHelper from './helpers/database';
 import Logger from './lib/Logger';
+import BadRequestError from './errors/BadRequestError';
+import UnauthorizedError from './errors/UnauthorizedError';
 
 class App {
   constructor() {
@@ -31,6 +33,14 @@ class App {
 
   exceptionHandler() {
     this.express.use((err, req, res, next) => {
+      if (err instanceof BadRequestError) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      if (err instanceof UnauthorizedError) {
+        return res.status(401).json({ error: err.message });
+      }
+
       Logger.error(
         `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${
           req.method

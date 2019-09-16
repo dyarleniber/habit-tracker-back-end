@@ -1,5 +1,6 @@
 import Habit from '../models/Habit';
 import Cache from '../../lib/Cache';
+import CheckHabitService from '../services/CheckHabitService';
 
 class HabitController {
   async index(req, res) {
@@ -110,7 +111,12 @@ class HabitController {
   }
 
   async check(req, res) {
-    res.json({ message: 'Ok' });
+    const checkHabit = await CheckHabitService.run({
+      habitId: req.params.id,
+      userId: req.userId,
+    });
+
+    return res.json(checkHabit);
   }
 }
 

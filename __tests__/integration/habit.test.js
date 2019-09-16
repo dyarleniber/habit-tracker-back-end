@@ -2,7 +2,7 @@ import supertest from 'supertest';
 
 import factory from '../factory';
 import app from '../../src/app';
-import authHelper from '../../src/app/helpers/auth';
+import authHelper from '../../src/helpers/auth';
 import HabitModel from '../../src/app/models/Habit';
 
 const request = supertest(app);
@@ -404,22 +404,78 @@ describe('Habit', () => {
    */
 
   it('should not be able check habit when authenticated and with invalid habit id', async () => {
-    expect(true).toBe(true);
+    const user = await factory.create('User');
+    const habitId = 'invalidhabitid';
+
+    const response = await request
+      .post(`/habits/${habitId}/check`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error', 'Habit not found');
   });
 
   it('should not be able check habit when authenticated and with habit id of another user', async () => {
-    expect(true).toBe(true);
+    const user1 = await factory.create('User', {
+      email: 'email1@email.com',
+    });
+
+    const user2 = await factory.create('User', {
+      email: 'email2@email.com',
+    });
+
+    const habit = await factory.create('Habit', {
+      user: user1.id,
+    });
+
+    const response = await request
+      .post(`/habits/${habit.id}/check`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user2.id)}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty(
+      'error',
+      'You are not the habit author'
+    );
   });
 
   it('should not be able check habit already checked for the current date', async () => {
-    expect(true).toBe(true);
+    const user = await factory.create('User');
+    const habit = await factory.create('Habit', {
+      user: user.id,
+    });
+
+    await factory.create('HabitChecked', {
+      habit: habit.id,
+    });
+
+    const response = await request
+      .post(`/habits/${habit.id}/check`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error', 'Habit already checked');
   });
 
   it('should be able to check habit when authenticated and with valid habit id', async () => {
-    expect(true).toBe(true);
-  });
+    const user = await factory.create('User');
+    const habit = await factory.create('Habit', {
+      user: user.id,
+    });
 
-  it('should be able to check habit only for the current date', async () => {
-    expect(true).toBe(true);
+    const response = await request
+      .post(`/habits/${habit.id}/check`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body.habit).toBe(habit.id);
+
+    const today = new Date();
+    const createdAt = new Date(response.body.createdAt);
+
+    expect(createdAt.getDate()).toBe(today.getDate());
+    expect(createdAt.getMonth()).toBe(today.getMonth());
+    expect(createdAt.getFullYear()).toBe(today.getFullYear());
   });
 });
