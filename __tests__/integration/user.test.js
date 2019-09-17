@@ -5,6 +5,7 @@ import factory from '../factory';
 import authHelper from '../../src/helpers/auth';
 import UserModel from '../../src/app/models/User';
 import HabitModel from '../../src/app/models/Habit';
+import HabitCheckedModel from '../../src/app/models/HabitChecked';
 import { transportMock } from '../../__mocks__/nodemailer';
 
 const request = supertest(app);
@@ -314,10 +315,15 @@ describe('User', () => {
     expect(userExists).toBeFalsy();
   });
 
-  it('should be able to delete user and user habits when authenticated', async () => {
+  it('should be able to delete user, habits and checked habits when authenticated', async () => {
     const user = await factory.create('User');
-    const habit = await factory.create('Habit', {
-      user: user.id,
+    const habit1 = await factory.create('Habit', { user: user.id });
+    const habit2 = await factory.create('Habit', { user: user.id });
+    const habitChecked1 = await factory.create('HabitChecked', {
+      habit: habit1.id,
+    });
+    const habitChecked2 = await factory.create('HabitChecked', {
+      habit: habit2.id,
     });
 
     const response = await request
@@ -327,10 +333,20 @@ describe('User', () => {
     expect(response.status).toBe(200);
 
     const userExists = await UserModel.findById(user.id);
-    const habitExists = await HabitModel.findById(habit.id);
+    const habit1Exists = await HabitModel.findById(habit1.id);
+    const habit2Exists = await HabitModel.findById(habit2.id);
+    const habitChecked1Exists = await HabitCheckedModel.findById(
+      habitChecked1.id
+    );
+    const habitChecked2Exists = await HabitCheckedModel.findById(
+      habitChecked2.id
+    );
 
     expect(userExists).toBeFalsy();
-    expect(habitExists).toBeFalsy();
+    expect(habit1Exists).toBeFalsy();
+    expect(habit2Exists).toBeFalsy();
+    expect(habitChecked1Exists).toBeFalsy();
+    expect(habitChecked2Exists).toBeFalsy();
   });
 
   it('should receive a email notification when a user is deleted', async () => {

@@ -4,6 +4,7 @@ import factory from '../factory';
 import app from '../../src/app';
 import authHelper from '../../src/helpers/auth';
 import HabitModel from '../../src/app/models/Habit';
+import HabitCheckedModel from '../../src/app/models/HabitChecked';
 
 const request = supertest(app);
 
@@ -382,10 +383,16 @@ describe('Habit', () => {
     );
   });
 
-  it('should be able to delete habit when authenticated and with valid habit id', async () => {
+  it('should be able to delete habit and check habits when authenticated and with valid habit id', async () => {
     const user = await factory.create('User');
     const habit = await factory.create('Habit', {
       user: user.id,
+    });
+    const habitChecked1 = await factory.create('HabitChecked', {
+      habit: habit.id,
+    });
+    const habitChecked2 = await factory.create('HabitChecked', {
+      habit: habit.id,
     });
 
     const response = await request
@@ -395,8 +402,16 @@ describe('Habit', () => {
     expect(response.status).toBe(200);
 
     const habitExists = await HabitModel.findById(habit.id);
+    const habitChecked1Exists = await HabitCheckedModel.findById(
+      habitChecked1.id
+    );
+    const habitChecked2Exists = await HabitCheckedModel.findById(
+      habitChecked2.id
+    );
 
     expect(habitExists).toBeFalsy();
+    expect(habitChecked1Exists).toBeFalsy();
+    expect(habitChecked2Exists).toBeFalsy();
   });
 
   /**
@@ -437,7 +452,7 @@ describe('Habit', () => {
     });
 
     // It SHOULD NOT RETURN habits of another users
-    const habit1 = await factory.create('Habit', {
+    await factory.create('Habit', {
       user: user1.id,
       createdAt: yesterday,
     });
@@ -453,7 +468,7 @@ describe('Habit', () => {
     });
 
     // It SHOULD NOT RETURN habits with creation date after the search date
-    const habit4 = await factory.create('Habit', {
+    await factory.create('Habit', {
       user: user2.id,
       createdAt: tomorrow,
     });
@@ -465,7 +480,7 @@ describe('Habit', () => {
     });
 
     // It SHOULD NOT RETURN check register for a date different to the search date
-    const habitChecked2 = await factory.create('HabitChecked', {
+    await factory.create('HabitChecked', {
       habit: habit3.id,
       createdAt: yesterday,
     });

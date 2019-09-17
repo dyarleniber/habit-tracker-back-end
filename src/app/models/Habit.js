@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate';
 
+import HabitChecked from './HabitChecked';
+
 const HabitSchema = new mongoose.Schema(
   {
     name: {
@@ -28,6 +30,24 @@ HabitSchema.virtual('check', {
   ref: 'HabitChecked',
   localField: '_id',
   foreignField: 'habit',
+});
+
+HabitSchema.pre('remove', async function(next) {
+  await HabitChecked.deleteMany({ habit: this._id });
+
+  next();
+});
+
+HabitSchema.pre('deleteMany', async function(next) {
+  const { user } = this.getQuery();
+
+  if (user) {
+    const habits = await this.find({ user });
+    const ids = habits.map(habit => habit._id);
+    await HabitChecked.deleteMany({ habit: { $in: ids } });
+  }
+
+  next();
 });
 
 HabitSchema.plugin(mongoosePaginate);
