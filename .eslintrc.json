@@ -23,8 +23,7 @@
     "no-underscore-dangle": "off",
     "no-unused-vars": [
       "error",
-      { "argsIgnorePattern": "next" },
-      { "varsIgnorePattern": "[iI]gnored" }
+      { "argsIgnorePattern": "next", "varsIgnorePattern": "[iI]gnored" }
     ],
     "func-names": ["error", "never"]
   }

@@ -31,6 +31,7 @@ routes.get('/habits/:id', HabitShowValidator, HabitController.show);
 routes.post('/habits', HabitStoreValidator, HabitController.store);
 routes.put('/habits/:id', HabitUpdateValidator, HabitController.update);
 routes.delete('/habits/:id', HabitDeleteValidator, HabitController.delete);
+routes.get('/habits/date/:date', HabitController.getByDate);
 routes.post('/habits/:id/check', HabitController.check);
 
 export default routes;

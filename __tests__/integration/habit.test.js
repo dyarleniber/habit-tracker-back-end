@@ -400,6 +400,98 @@ describe('Habit', () => {
   });
 
   /**
+   * Get habits by date
+   */
+
+  it('should not be able to get habits with an invalid date', async () => {
+    const user = await factory.create('User');
+
+    const response = await request
+      .get('/habits/date/invaliddate')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error', 'Invalid date');
+  });
+
+  it('should be able to get habits by date with a valid date', async () => {
+    const today = new Date();
+
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    // It should search for all habits for today
+    const searchDate = today;
+
+    // It's is not the user used in authentication
+    const user1 = await factory.create('User', {
+      email: 'email1@email.com',
+    });
+
+    // It's is the user used in authentication
+    const user2 = await factory.create('User', {
+      email: 'email2@email.com',
+    });
+
+    // It SHOULD NOT RETURN habits of another users
+    const habit1 = await factory.create('Habit', {
+      user: user1.id,
+      createdAt: yesterday,
+    });
+
+    // It SHOULD RETURN habits with creation date before or equals to search date
+    const habit2 = await factory.create('Habit', {
+      user: user2.id,
+      createdAt: yesterday,
+    });
+    const habit3 = await factory.create('Habit', {
+      user: user2.id,
+      createdAt: today,
+    });
+
+    // It SHOULD NOT RETURN habits with creation date after the search date
+    const habit4 = await factory.create('Habit', {
+      user: user2.id,
+      createdAt: tomorrow,
+    });
+
+    // It SHOULD RETURN check register for a date equals to search date
+    const habitChecked1 = await factory.create('HabitChecked', {
+      habit: habit2.id,
+      createdAt: today,
+    });
+
+    // It SHOULD NOT RETURN check register for a date different to the search date
+    const habitChecked2 = await factory.create('HabitChecked', {
+      habit: habit3.id,
+      createdAt: yesterday,
+    });
+
+    const response = await request
+      .get(`/habits/date/${searchDate.getTime()}`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user2.id)}`);
+
+    expect(response.status).toBe(200);
+
+    expect(response.body).toHaveProperty('total', 2);
+
+    expect(response.body).toHaveProperty('docs');
+    expect(response.body.docs.length).toBe(2);
+
+    expect(response.body.docs[0]._id).toBe(habit3.id);
+    expect(response.body.docs[0].user._id).toBe(user2.id);
+    expect(response.body.docs[0].check.length).toBe(0);
+
+    expect(response.body.docs[1]._id).toBe(habit2.id);
+    expect(response.body.docs[1].user._id).toBe(user2.id);
+    expect(response.body.docs[1].check.length).toBe(1);
+    expect(response.body.docs[1].check[0]._id).toBe(habitChecked1.id);
+  });
+
+  /**
    * Check habit
    */
 

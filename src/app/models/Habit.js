@@ -19,8 +19,16 @@ const HabitSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+HabitSchema.virtual('check', {
+  ref: 'HabitChecked',
+  localField: '_id',
+  foreignField: 'habit',
+});
 
 HabitSchema.plugin(mongoosePaginate);
 
