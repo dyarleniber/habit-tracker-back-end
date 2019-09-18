@@ -1,8 +1,4 @@
 import { Router } from 'express';
-import Brute from 'express-brute';
-import BruteRedis from 'express-brute-redis';
-
-import redisConfig from './config/redis';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
@@ -18,22 +14,10 @@ import HabitGetByDateValidator from './app/validators/HabitGetByDate';
 
 import authMiddleware from './app/middlewares/auth';
 
-const bruteStore = new BruteRedis({
-  host: redisConfig.host,
-  port: redisConfig.port,
-});
-
-const bruteForce = new Brute(bruteStore);
-
 const routes = new Router();
 
 routes.post('/users', UserStoreValidator, UserController.store);
-routes.post(
-  '/sessions',
-  bruteForce.prevent,
-  SessionStoreValidator,
-  SessionController.store
-);
+routes.post('/sessions', SessionStoreValidator, SessionController.store);
 
 routes.use(authMiddleware);
 
