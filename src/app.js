@@ -1,11 +1,19 @@
 import './bootstrap';
 
 import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import redis from 'redis';
+import RateLimit from 'express-rate-limit';
+import RateLimitRedis from 'rate-limit-redis';
 import 'express-async-errors';
 
 import routes from './routes';
-import databaseHelper from './helpers/database';
 import Logger from './lib/Logger';
+import corsConfig from './config/cors';
+import redisConfig from './config/redis';
+import rateLimitConfig from './config/rateLimit';
+import databaseHelper from './helpers/database';
 import BadRequestError from './errors/BadRequestError';
 import UnauthorizedError from './errors/UnauthorizedError';
 
@@ -24,6 +32,20 @@ class App {
   }
 
   middlewares() {
+    this.express.use(
+      new RateLimit({
+        store: new RateLimitRedis({
+          client: redis.createClient({
+            host: redisConfig.host,
+            port: redisConfig.port,
+          }),
+        }),
+        windowMs: rateLimitConfig.windowMs,
+        max: rateLimitConfig.max,
+      })
+    );
+    this.express.use(helmet());
+    this.express.use(cors(corsConfig));
     this.express.use(express.json());
   }
 
