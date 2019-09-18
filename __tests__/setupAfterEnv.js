@@ -1,6 +1,6 @@
 import '../src/bootstrap';
 
-import databaseHelper from '../src/helpers/database';
+import databaseHelper from '../src/app/helpers/database';
 
 beforeAll(() => {
   return databaseHelper.connect();

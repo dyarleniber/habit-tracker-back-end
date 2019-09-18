@@ -1,7 +1,7 @@
 import { createLogger, config, transports, format } from 'winston';
 
 import loggerConfig from '../config/logger';
-import uuidHelper from '../helpers/uuid';
+import uuidHelper from '../app/helpers/uuid';
 
 const { combine, timestamp, label, printf } = format;
 

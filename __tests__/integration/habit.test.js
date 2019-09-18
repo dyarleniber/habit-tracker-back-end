@@ -1,8 +1,9 @@
 import supertest from 'supertest';
+import Redis from 'ioredis';
 
 import factory from '../factory';
 import app from '../../src/app';
-import authHelper from '../../src/helpers/auth';
+import authHelper from '../../src/app/helpers/auth';
 import HabitModel from '../../src/app/models/Habit';
 import HabitCheckedModel from '../../src/app/models/HabitChecked';
 
@@ -12,6 +13,18 @@ describe('Habit', () => {
   /**
    * Show habits
    */
+
+  it('should not be able to get habits when authenticated and with invalid filters', async () => {
+    const user = await factory.create('User');
+
+    const response = await request
+      .get('/habits?id=1')
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(Array.isArray(response.body.error)).toBe(true);
+  });
 
   it('should be able to get habits when authenticated', async () => {
     const user = await factory.create('User');
@@ -320,6 +333,25 @@ describe('Habit', () => {
     );
   });
 
+  it('should not be able to update habit when authenticated and with invalid data', async () => {
+    const user = await factory.create('User');
+
+    const habit = await factory.create('Habit', {
+      user: user.id,
+    });
+
+    const response = await request
+      .put(`/habits/${habit.id}`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`)
+      .send({
+        id: 1,
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(Array.isArray(response.body.error)).toBe(true);
+  });
+
   it('should be able to update habit when authenticated and with valid data', async () => {
     const user = await factory.create('User');
 
@@ -504,6 +536,46 @@ describe('Habit', () => {
     expect(response.body.docs[1].user._id).toBe(user2.id);
     expect(response.body.docs[1].check.length).toBe(1);
     expect(response.body.docs[1].check[0]._id).toBe(habitChecked1.id);
+  });
+
+  it('should be able to get cached habits by date when authenticated', async () => {
+    const page = 1;
+    const searchDate = new Date();
+    searchDate.setHours(23, 59, 59, 59);
+
+    const user = await factory.create('User');
+    await factory.create('Habit', {
+      user: user.id,
+      createdAt: searchDate,
+    });
+    await factory.create('Habit', {
+      user: user.id,
+      createdAt: searchDate,
+    });
+
+    const cachedHabits = {
+      cached: true,
+    };
+
+    const spy = jest
+      .spyOn(Redis.prototype, 'get')
+      .mockReturnValue(JSON.stringify(cachedHabits));
+
+    const response = await request
+      .get(`/habits/date/${searchDate.getTime()}?page=${page}`)
+      .set('Authorization', `Bearer ${authHelper.generateToken(user.id)}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject(cachedHabits);
+
+    const cacheKey = `user:${
+      user.id
+    }:habits:page:${page}:date:${searchDate.getTime()}`;
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(cacheKey);
+
+    spy.mockRestore();
   });
 
   /**

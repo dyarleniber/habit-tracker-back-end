@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import databaseConfig from '../config/database';
+import databaseConfig from '../../config/database';
 
 const connect = async () => {
   if (mongoose.connection.readyState === 0) {

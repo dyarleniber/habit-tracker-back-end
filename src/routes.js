@@ -12,10 +12,8 @@ import UserStoreValidator from './app/validators/UserStore';
 import UserUpdateValidator from './app/validators/UserUpdate';
 import SessionStoreValidator from './app/validators/SessionStore';
 import HabitIndexValidator from './app/validators/HabitIndex';
-import HabitShowValidator from './app/validators/HabitShow';
 import HabitStoreValidator from './app/validators/HabitStore';
 import HabitUpdateValidator from './app/validators/HabitUpdate';
-import HabitDeleteValidator from './app/validators/HabitDelete';
 import HabitGetByDateValidator from './app/validators/HabitGetByDate';
 
 import authMiddleware from './app/middlewares/auth';
@@ -44,10 +42,10 @@ routes.put('/users', UserUpdateValidator, UserController.update);
 routes.delete('/users', UserController.delete);
 
 routes.get('/habits', HabitIndexValidator, HabitController.index);
-routes.get('/habits/:id', HabitShowValidator, HabitController.show);
+routes.get('/habits/:id', HabitController.show);
 routes.post('/habits', HabitStoreValidator, HabitController.store);
 routes.put('/habits/:id', HabitUpdateValidator, HabitController.update);
-routes.delete('/habits/:id', HabitDeleteValidator, HabitController.delete);
+routes.delete('/habits/:id', HabitController.delete);
 routes.get(
   '/habits/date/:date',
   HabitGetByDateValidator,

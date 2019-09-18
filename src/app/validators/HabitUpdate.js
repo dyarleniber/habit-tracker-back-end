@@ -2,17 +2,12 @@ import Joi from 'joi';
 
 export default async (req, res, next) => {
   try {
-    const bodySchema = Joi.object({
+    const schema = Joi.object({
       name: Joi.string(),
       description: Joi.string(),
     });
 
-    const paramsSchema = Joi.object({
-      id: Joi.string().required(),
-    });
-
-    await bodySchema.validate(req.body);
-    await paramsSchema.validate(req.params);
+    await schema.validate(req.body);
 
     return next();
   } catch (err) {

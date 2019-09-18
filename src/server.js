@@ -1,3 +1,5 @@
 import app from './app';
 
-app.listen(process.env.NODE_PORT || 3000);
+import serverConfig from './config/server';
+
+app.listen(serverConfig.port);

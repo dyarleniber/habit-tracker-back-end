@@ -13,7 +13,7 @@ import Logger from './lib/Logger';
 import corsConfig from './config/cors';
 import redisConfig from './config/redis';
 import rateLimitConfig from './config/rateLimit';
-import databaseHelper from './helpers/database';
+import databaseHelper from './app/helpers/database';
 import BadRequestError from './errors/BadRequestError';
 import UnauthorizedError from './errors/UnauthorizedError';
 

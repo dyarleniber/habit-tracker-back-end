@@ -1,5 +1,5 @@
 import User from '../models/User';
-import authHelper from '../../helpers/auth';
+import authHelper from '../helpers/auth';
 
 export default async (req, res, next) => {
   const authHeader = req.headers.authorization;
