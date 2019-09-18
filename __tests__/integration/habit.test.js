@@ -15,7 +15,7 @@ describe('Habit', () => {
    * Show habits
    */
 
-  it('should not be able to get habits when authenticated and with invalid filters', async () => {
+  it('should not be able to get habits with invalid filters', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -27,7 +27,7 @@ describe('Habit', () => {
     expect(Array.isArray(response.body.error)).toBe(true);
   });
 
-  it('should be able to get habits when authenticated', async () => {
+  it('should be able to get habits', async () => {
     const user = await factory.create('User');
     const habit = await factory.create('Habit', {
       user: user.id,
@@ -39,10 +39,10 @@ describe('Habit', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('docs');
-    expect(response.body).toHaveProperty('total', 1);
+    expect(response.body).toHaveProperty('totalDocs', 1);
     expect(response.body).toHaveProperty('limit', 20);
     expect(response.body).toHaveProperty('page', 1);
-    expect(response.body).toHaveProperty('pages', 1);
+    expect(response.body).toHaveProperty('totalPages', 1);
 
     expect(Array.isArray(response.body.docs)).toBe(true);
     expect(response.body.docs.length).toBe(1);
@@ -57,7 +57,7 @@ describe('Habit', () => {
     expect(response.body.docs[0].user).not.toHaveProperty('password');
   });
 
-  it('should be able to get habits with correct pagination when authenticated', async () => {
+  it('should be able to get habits with correct pagination', async () => {
     const user = await factory.create('User');
 
     let habitPromises = new Array(21).fill({});
@@ -75,10 +75,10 @@ describe('Habit', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('docs');
-    expect(response.body).toHaveProperty('total', 21);
+    expect(response.body).toHaveProperty('totalDocs', 21);
     expect(response.body).toHaveProperty('limit', 20);
     expect(response.body).toHaveProperty('page', 1);
-    expect(response.body).toHaveProperty('pages', 2);
+    expect(response.body).toHaveProperty('totalPages', 2);
     expect(Array.isArray(response.body.docs)).toBe(true);
     expect(response.body.docs.length).toBe(20);
 
@@ -88,15 +88,15 @@ describe('Habit', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('docs');
-    expect(response.body).toHaveProperty('total', 21);
+    expect(response.body).toHaveProperty('totalDocs', 21);
     expect(response.body).toHaveProperty('limit', 20);
-    expect(response.body).toHaveProperty('page', '2');
-    expect(response.body).toHaveProperty('pages', 2);
+    expect(response.body).toHaveProperty('page', 2);
+    expect(response.body).toHaveProperty('totalPages', 2);
     expect(Array.isArray(response.body.docs)).toBe(true);
     expect(response.body.docs.length).toBe(1);
   });
 
-  it('should be able to get filtered habits when authenticated', async () => {
+  it('should be able to get filtered habits', async () => {
     const user = await factory.create('User');
 
     await factory.create('Habit', {
@@ -117,10 +117,10 @@ describe('Habit', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('docs');
-    expect(response.body).toHaveProperty('total', 1);
+    expect(response.body).toHaveProperty('totalDocs', 1);
     expect(response.body).toHaveProperty('limit', 20);
     expect(response.body).toHaveProperty('page', 1);
-    expect(response.body).toHaveProperty('pages', 1);
+    expect(response.body).toHaveProperty('totalPages', 1);
     expect(Array.isArray(response.body.docs)).toBe(true);
     expect(response.body.docs.length).toBe(1);
     expect(response.body.docs[0].name).toBe('habit01');
@@ -132,10 +132,10 @@ describe('Habit', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('docs');
-    expect(response.body).toHaveProperty('total', 1);
+    expect(response.body).toHaveProperty('totalDocs', 1);
     expect(response.body).toHaveProperty('limit', 20);
     expect(response.body).toHaveProperty('page', 1);
-    expect(response.body).toHaveProperty('pages', 1);
+    expect(response.body).toHaveProperty('totalPages', 1);
     expect(Array.isArray(response.body.docs)).toBe(true);
     expect(response.body.docs.length).toBe(1);
     expect(response.body.docs[0].name).toBe('habit02');
@@ -169,10 +169,10 @@ describe('Habit', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('docs');
-    expect(response.body).toHaveProperty('total', 2);
+    expect(response.body).toHaveProperty('totalDocs', 2);
     expect(response.body).toHaveProperty('limit', 20);
     expect(response.body).toHaveProperty('page', 1);
-    expect(response.body).toHaveProperty('pages', 1);
+    expect(response.body).toHaveProperty('totalPages', 1);
 
     expect(Array.isArray(response.body.docs)).toBe(true);
 
@@ -195,7 +195,7 @@ describe('Habit', () => {
    * Show habit
    */
 
-  it('should not be able get habit when authenticated and with invalid habit id', async () => {
+  it('should not be able get habit with invalid habit id', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -206,7 +206,7 @@ describe('Habit', () => {
     expect(response.body).toHaveProperty('error', 'Habit not found');
   });
 
-  it('should not be able get habit when authenticated and with habit id of another user', async () => {
+  it('should not be able get habit with habit id of another user', async () => {
     const user1 = await factory.create('User', {
       email: 'email1@email.com',
     });
@@ -230,7 +230,7 @@ describe('Habit', () => {
     );
   });
 
-  it('should be able to get habit when authenticated and with valid habit id', async () => {
+  it('should be able to get habit with valid habit id', async () => {
     const user = await factory.create('User');
     const habit = await factory.create('Habit', {
       user: user.id,
@@ -256,7 +256,7 @@ describe('Habit', () => {
    * Store habit
    */
 
-  it('should not be able create habit when authenticated and with empty data', async () => {
+  it('should not be able create habit with empty data', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -269,7 +269,7 @@ describe('Habit', () => {
     expect(Array.isArray(response.body.error)).toBe(true);
   });
 
-  it('should be able to create habit when authenticated and with valid data', async () => {
+  it('should be able to create habit with valid data', async () => {
     const user = await factory.create('User');
     const habit = await factory.build('Habit', {
       user: user.id,
@@ -292,7 +292,7 @@ describe('Habit', () => {
    * Update habit
    */
 
-  it('should not be able update habit when authenticated and with invalid habit id', async () => {
+  it('should not be able update habit with invalid habit id', async () => {
     const user = await factory.create('User');
     const habit = await factory.build('Habit', {
       user: user.id,
@@ -310,7 +310,7 @@ describe('Habit', () => {
     expect(response.body).toHaveProperty('error', 'Habit not found');
   });
 
-  it('should not be able update habit when authenticated and with habit id of another user', async () => {
+  it('should not be able update habit with habit id of another user', async () => {
     const user1 = await factory.create('User', {
       email: 'email1@email.com',
     });
@@ -334,7 +334,7 @@ describe('Habit', () => {
     );
   });
 
-  it('should not be able to update habit when authenticated and with invalid data', async () => {
+  it('should not be able to update habit with invalid data', async () => {
     const user = await factory.create('User');
 
     const habit = await factory.create('Habit', {
@@ -353,7 +353,7 @@ describe('Habit', () => {
     expect(Array.isArray(response.body.error)).toBe(true);
   });
 
-  it('should be able to update habit when authenticated and with valid data', async () => {
+  it('should be able to update habit with valid data', async () => {
     const user = await factory.create('User');
 
     const habit = await factory.create('Habit', {
@@ -381,7 +381,7 @@ describe('Habit', () => {
    * Delete habit
    */
 
-  it('should not be able delete habit when authenticated and with invalid habit id', async () => {
+  it('should not be able delete habit with invalid habit id', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -392,7 +392,7 @@ describe('Habit', () => {
     expect(response.body).toHaveProperty('error', 'Habit not found');
   });
 
-  it('should not be able delete habit when authenticated and with habit id of another user', async () => {
+  it('should not be able delete habit with habit id of another user', async () => {
     const user1 = await factory.create('User', {
       email: 'email1@email.com',
     });
@@ -416,7 +416,7 @@ describe('Habit', () => {
     );
   });
 
-  it('should be able to delete habit and check habits when authenticated and with valid habit id', async () => {
+  it('should be able to delete habit and check habits with valid habit id', async () => {
     const user = await factory.create('User');
     const habit = await factory.create('Habit', {
       user: user.id,
@@ -520,7 +520,7 @@ describe('Habit', () => {
 
     expect(response.status).toBe(200);
 
-    expect(response.body).toHaveProperty('total', 2);
+    expect(response.body).toHaveProperty('totalDocs', 2);
 
     expect(response.body).toHaveProperty('docs');
     expect(response.body.docs.length).toBe(2);
@@ -535,7 +535,7 @@ describe('Habit', () => {
     expect(response.body.docs[1].check[0]._id).toBe(habitChecked1.id);
   });
 
-  it('should be able to get cached habits by date when authenticated', async () => {
+  it('should be able to get cached habits by date', async () => {
     const page = 1;
     const searchDate = endOfDay(new Date());
 
@@ -578,7 +578,7 @@ describe('Habit', () => {
    * Check habit
    */
 
-  it('should not be able check habit when authenticated and with invalid habit id', async () => {
+  it('should not be able check habit with invalid habit id', async () => {
     const user = await factory.create('User');
     const habitId = 'invalidhabitid';
 
@@ -590,7 +590,7 @@ describe('Habit', () => {
     expect(response.body).toHaveProperty('error', 'Habit not found');
   });
 
-  it('should not be able check habit when authenticated and with habit id of another user', async () => {
+  it('should not be able check habit with habit id of another user', async () => {
     const user1 = await factory.create('User', {
       email: 'email1@email.com',
     });
@@ -632,7 +632,7 @@ describe('Habit', () => {
     expect(response.body).toHaveProperty('error', 'Habit already checked');
   });
 
-  it('should be able to check habit when authenticated and with valid habit id', async () => {
+  it('should be able to check habit with valid habit id', async () => {
     const user = await factory.create('User');
     const habit = await factory.create('Habit', {
       user: user.id,

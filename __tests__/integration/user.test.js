@@ -152,7 +152,7 @@ describe('User', () => {
     expect(response.body).toHaveProperty('error', 'Invalid token');
   });
 
-  it('should be able to get user when authenticated', async () => {
+  it('should be able to get user', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -178,7 +178,7 @@ describe('User', () => {
    * Update user
    */
 
-  it('should not be able update user when authenticated and with invalid email', async () => {
+  it('should not be able update user with invalid email', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -193,7 +193,7 @@ describe('User', () => {
     expect(Array.isArray(response.body.error)).toBe(true);
   });
 
-  it('should not be able update user when authenticated and with duplicate email', async () => {
+  it('should not be able update user with duplicate email', async () => {
     const user1 = await factory.create('User', {
       email: 'email1@email.com',
     });
@@ -213,7 +213,7 @@ describe('User', () => {
     expect(response.body).toHaveProperty('error', 'User already exists');
   });
 
-  it('should be able to update only one user field when authenticated and with valid data', async () => {
+  it('should be able to update only one user field with valid data', async () => {
     const user = await factory.create('User', {
       password: '123123',
     });
@@ -241,7 +241,7 @@ describe('User', () => {
     expect(compareHash).toBe(true);
   });
 
-  it('should be able to update user when authenticated and with valid data', async () => {
+  it('should be able to update user with valid data', async () => {
     const user = await factory.create('User', {
       password: '123123',
     });
@@ -301,7 +301,7 @@ describe('User', () => {
    * Delete user
    */
 
-  it('should be able to delete user when authenticated', async () => {
+  it('should be able to delete user', async () => {
     const user = await factory.create('User');
 
     const response = await request
@@ -315,7 +315,7 @@ describe('User', () => {
     expect(userExists).toBeFalsy();
   });
 
-  it('should be able to delete user, habits and checked habits when authenticated', async () => {
+  it('should be able to delete user, habits and checked habits', async () => {
     const user = await factory.create('User');
     const habit1 = await factory.create('Habit', { user: user.id });
     const habit2 = await factory.create('Habit', { user: user.id });
