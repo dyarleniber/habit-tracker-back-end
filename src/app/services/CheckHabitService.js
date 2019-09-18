@@ -1,3 +1,5 @@
+import { startOfDay, addDays } from 'date-fns';
+
 import Habit from '../models/Habit';
 import HabitChecked from '../models/HabitChecked';
 import Cache from '../../lib/Cache';
@@ -22,12 +24,9 @@ class CheckHabitService {
       throw new UnauthorizedError('You are not the habit author');
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = startOfDay(new Date());
 
-    const tomorrow = new Date();
-    tomorrow.setHours(0, 0, 0, 0);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrow = addDays(today, 1);
 
     const habitCheckedExists = await HabitChecked.findOne({
       habit: habit.id,

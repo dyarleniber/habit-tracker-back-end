@@ -1,3 +1,5 @@
+import { startOfDay, endOfDay, addDays } from 'date-fns';
+
 import Habit from '../models/Habit';
 import Cache from '../../lib/Cache';
 import GetHabitsService from '../services/GetHabitsService';
@@ -85,8 +87,7 @@ class HabitController {
   async getByDate(req, res) {
     const { page = 1 } = req.query;
 
-    const date = new Date(Number(req.params.date));
-    date.setHours(23, 59, 59, 59);
+    const date = endOfDay(new Date(Number(req.params.date)));
 
     const cacheKey = `user:${
       req.userId
@@ -105,12 +106,9 @@ class HabitController {
       },
     };
 
-    const initialCheckDate = new Date(date.getTime());
-    initialCheckDate.setHours(0, 0, 0, 0);
+    const initialCheckDate = startOfDay(date);
 
-    const finalCheckDate = new Date(date.getTime());
-    finalCheckDate.setHours(0, 0, 0, 0);
-    finalCheckDate.setDate(date.getDate() + 1);
+    const finalCheckDate = addDays(startOfDay(date), 1);
 
     const populate = [
       {

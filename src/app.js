@@ -55,23 +55,21 @@ class App {
 
   exceptionHandler() {
     this.express.use((err, req, res, next) => {
+      const { status = 500, message } = err;
+
+      const { originalUrl: url, method, ip } = req;
+
       if (err instanceof BadRequestError) {
-        return res.status(400).json({ error: err.message });
+        return res.status(400).json({ error: message });
       }
 
       if (err instanceof UnauthorizedError) {
-        return res.status(401).json({ error: err.message });
+        return res.status(401).json({ error: message });
       }
 
-      Logger.error(
-        `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${
-          req.method
-        } - ${req.ip}`
-      );
+      Logger.error(`${status} - ${message} - ${url} - ${method} - ${ip}`);
 
-      return res
-        .status(err.status || 500)
-        .json({ error: 'Internal server error' });
+      return res.status(status).json({ error: 'Internal server error' });
     });
   }
 }

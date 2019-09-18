@@ -1,5 +1,6 @@
 import supertest from 'supertest';
 import Redis from 'ioredis';
+import { endOfDay, addDays, subDays } from 'date-fns';
 
 import factory from '../factory';
 import app from '../../src/app';
@@ -463,12 +464,8 @@ describe('Habit', () => {
 
   it('should be able to get habits by date with a valid date', async () => {
     const today = new Date();
-
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
-
-    const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
+    const yesterday = subDays(today, 1);
+    const tomorrow = addDays(today, 1);
 
     // It should search for all habits for today
     const searchDate = today;
@@ -540,8 +537,7 @@ describe('Habit', () => {
 
   it('should be able to get cached habits by date when authenticated', async () => {
     const page = 1;
-    const searchDate = new Date();
-    searchDate.setHours(23, 59, 59, 59);
+    const searchDate = endOfDay(new Date());
 
     const user = await factory.create('User');
     await factory.create('Habit', {
