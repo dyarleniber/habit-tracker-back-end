@@ -1,31 +1,13 @@
 import Habit from '../models/Habit';
 import Cache from '../../lib/Cache';
+import GetHabitsService from '../services/GetHabitsService';
 import CheckHabitService from '../services/CheckHabitService';
 
 class HabitController {
   async index(req, res) {
-    const { page = 1 } = req.query;
-
-    const filters = {};
-
-    filters.user = req.userId;
-
-    if (req.query.name) {
-      filters.name = new RegExp(req.query.name, 'i');
-    }
-
-    if (req.query.description) {
-      filters.description = new RegExp(req.query.description, 'i');
-    }
-
-    const habits = await Habit.paginate(filters, {
-      page,
-      limit: 20,
-      populate: {
-        path: 'user',
-        select: '-password',
-      },
-      sort: '-createdAt',
+    const habits = await GetHabitsService.run({
+      userId: req.userId,
+      filters: req.query,
     });
 
     return res.json(habits);
@@ -101,14 +83,9 @@ class HabitController {
   }
 
   async getByDate(req, res) {
-    const date = new Date(Number(req.params.date));
-
-    if (Number.isNaN(date.getTime())) {
-      return res.status(400).json({ error: 'Invalid date' });
-    }
-
     const { page = 1 } = req.query;
 
+    const date = new Date(Number(req.params.date));
     date.setHours(23, 59, 59, 59);
 
     const cacheKey = `user:${
@@ -121,12 +98,12 @@ class HabitController {
       return res.json(cached);
     }
 
-    const filters = {};
-
-    filters.user = req.userId;
-
-    filters.createdAt = {};
-    filters.createdAt.$lte = date;
+    const filters = {
+      page,
+      createdAt: {
+        $lte: date,
+      },
+    };
 
     const initialCheckDate = new Date(date.getTime());
     initialCheckDate.setHours(0, 0, 0, 0);
@@ -135,27 +112,24 @@ class HabitController {
     finalCheckDate.setHours(0, 0, 0, 0);
     finalCheckDate.setDate(date.getDate() + 1);
 
-    const habits = await Habit.paginate(filters, {
-      page,
-      limit: 20,
-      populate: [
-        {
-          path: 'user',
-          select: '-password',
-        },
-        {
-          path: 'check',
-          match: {
-            createdAt: {
-              $gte: initialCheckDate,
-              $lt: finalCheckDate,
-            },
+    const populate = [
+      {
+        path: 'check',
+        match: {
+          createdAt: {
+            $gte: initialCheckDate,
+            $lt: finalCheckDate,
           },
-          options: { limit: 1 },
-          sort: '-createdAt',
         },
-      ],
-      sort: '-createdAt',
+        options: { limit: 1 },
+        sort: '-createdAt',
+      },
+    ];
+
+    const habits = await GetHabitsService.run({
+      userId: req.userId,
+      filters,
+      populate,
     });
 
     await Cache.set(cacheKey, habits);
